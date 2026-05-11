@@ -21,11 +21,14 @@ import {
   addCompetitor,
   loadCompetitors,
   writeReport,
+  writeReportNamed,
   writeComparison
 } from "../lib/storage.mjs";
 import { compareSites } from "../lib/compare.mjs";
 import { buildReportMarkdown } from "../lib/reporter.mjs";
 import { scorePage, bucketFor, emptyBucketCounts } from "../lib/scoring.mjs";
+import { computePriorityRows } from "../lib/priority.mjs";
+import { buildPriorityReportHtml } from "../lib/priority-report-html.mjs";
 import { normalizeDomain, mulberry32, pickRandom } from "../lib/utils.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -356,6 +359,47 @@ async function cmdReport(positional, flags) {
   process.stdout.write(`Report written: ${filePath}\n`);
 }
 
+async function cmdPriority(positional, flags) {
+  const target = normalizeDomain(positional[0]);
+  if (!target) exitErr("priority requires a target domain");
+  const root = resolveArtifactsDir(flags.artifacts);
+  const analysis = await readLatestAnalysis(root, target);
+  if (!analysis) exitErr(`no analysis artifacts for ${target}; run /aiv-analyze first`);
+  const crawlData = await readLatestCrawl(root, target);
+
+  const rows = computePriorityRows({ verdicts: analysis.verdicts });
+  const residualNeedsReview = analysis.verdicts.reduce((sum, page) =>
+    sum + page.verdicts.filter((v) => v.value === "NEEDS_REVIEW").length, 0);
+  const thorough = analysis.input?.args?.thorough === true || analysis.input?.args?.thorough === "true";
+  const coverage = {
+    pagesAnalyzed: analysis.verdicts.length,
+    totalUrls: crawlData?.urls?.length ?? analysis.verdicts.length,
+    residualNeedsReview,
+    thorough
+  };
+  const html = buildPriorityReportHtml({ domain: target, rows, coverage, plugin: PLUGIN });
+  const htmlPath = await writeReportNamed(root, target, "priority", html, "html");
+
+  const jsonPayload = {
+    domain: target,
+    generatedAt: new Date().toISOString(),
+    plugin: PLUGIN,
+    coverage,
+    rows
+  };
+  const jsonPath = await writeReportNamed(root, target, "priority", `${JSON.stringify(jsonPayload, null, 2)}\n`, "json");
+
+  process.stdout.write(`Priority report written: ${htmlPath}\n`);
+  process.stdout.write(`Priority JSON written:   ${jsonPath}\n`);
+  process.stdout.write(`- Rows: ${rows.length}\n`);
+  const byBucket = { HIGH: 0, MEDIUM: 0, LOW: 0, NONE: 0 };
+  for (const r of rows) byBucket[r.bucket] += 1;
+  process.stdout.write(`- Buckets: HIGH=${byBucket.HIGH}, MEDIUM=${byBucket.MEDIUM}, LOW=${byBucket.LOW}, NONE=${byBucket.NONE}\n`);
+  if (!thorough && residualNeedsReview > 0) {
+    process.stdout.write(`- Warning: analysis was not run with --thorough; ${residualNeedsReview} verdict(s) remained NEEDS_REVIEW and are excluded from priority denominator.\n`);
+  }
+}
+
 async function cmdStatus(positional, flags) {
   const root = resolveArtifactsDir(flags.artifacts);
   const sitesDir = path.join(root, "sites");
@@ -394,9 +438,11 @@ async function main() {
       return cmdReport(positional, flags);
     case "status":
       return cmdStatus(positional, flags);
+    case "priority":
+      return cmdPriority(positional, flags);
     default:
       process.stderr.write(`unknown command: ${subcommand || "(none)"}\n`);
-      process.stderr.write(`usage: aiv <checklist|doctor|crawl|analyze|add-competitor|compare|report|status> [options]\n`);
+      process.stderr.write(`usage: aiv <checklist|doctor|crawl|analyze|add-competitor|compare|report|status|priority> [options]\n`);
       process.exit(2);
   }
 }
