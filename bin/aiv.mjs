@@ -35,7 +35,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PLUGIN_ROOT = path.resolve(__dirname, "..");
 
 const PLUGIN = JSON.parse(
-  await fs.readFile(path.join(PLUGIN_ROOT, ".claude-plugin", "plugin.json"), "utf8").catch(() => '{"name":"ai-visibility-booster","version":"0.1.1"}')
+  await fs.readFile(path.join(PLUGIN_ROOT, ".claude-plugin", "plugin.json"), "utf8").catch(() => '{"name":"ai-visibility-booster","version":"0.1.2"}')
 );
 
 function resolveArtifactsDir(flag) {

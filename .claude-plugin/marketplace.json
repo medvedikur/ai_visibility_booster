@@ -14,10 +14,10 @@
       "source": {
         "source": "url",
         "url": "https://github.com/medvedikur/ai_visibility_booster.git",
-        "ref": "v0.1.1"
+        "ref": "v0.1.2"
       },
       "description": "Technical AI Visibility audits for websites: crawl URL inventories, run 36 basic crawler-readiness checks, compare competitors, and generate local reports.",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "strict": true
     }
   ]

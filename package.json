@@ -1,6 +1,6 @@
 {
   "name": "ai-visibility-booster",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Technical AI Visibility audits for websites: crawl URL inventories, run 36 basic crawler-readiness checks, compare competitors, and generate local reports.",
   "type": "module",
   "bin": {

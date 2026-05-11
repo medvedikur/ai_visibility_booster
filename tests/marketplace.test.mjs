@@ -21,8 +21,8 @@ test(".claude-plugin/marketplace.json exists and is valid JSON", async () => {
     /^https:\/\/github\.com\/medvedikur\/ai_visibility_booster\.git$/,
     "plugin source.url must point to the public GitHub repo"
   );
-  assert.equal(plugin.source?.ref, "v0.1.1");
-  assert.equal(plugin.version, "0.1.1");
+  assert.equal(plugin.source?.ref, "v0.1.2");
+  assert.equal(plugin.version, "0.1.2");
 });
 
 test("plugin.json and marketplace.json coexist with consistent version", async () => {
@@ -32,11 +32,11 @@ test("plugin.json and marketplace.json coexist with consistent version", async (
   const marketplace = JSON.parse(await fs.readFile(marketplaceFile, "utf8"));
   assert.equal(plugin.name, "ai-visibility-booster");
   assert.equal(marketplace.name, "ai-visibility-booster-marketplace");
-  assert.equal(plugin.version, "0.1.1");
+  assert.equal(plugin.version, "0.1.2");
   assert.equal(marketplace.plugins[0].version, plugin.version);
 });
 
-test("package.json version is bumped to 0.1.1", async () => {
+test("package.json version is bumped to 0.1.2", async () => {
   const data = JSON.parse(await fs.readFile(path.join(ROOT, "package.json"), "utf8"));
-  assert.equal(data.version, "0.1.1");
+  assert.equal(data.version, "0.1.2");
 });
