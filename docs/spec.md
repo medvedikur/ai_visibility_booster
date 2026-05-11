@@ -40,10 +40,11 @@ explicitly **not** a 25-check subset and **not** the full audit checklist.
 | Command | Purpose |
 |---|---|
 | `/aiv-crawl <url> [opts]` | Crawl URL inventory for a public site, save artifacts. |
-| `/aiv-analyze <domain> [opts]` | Analyze selected pages against the 36 `AIVB-xxx` checks. |
+| `/aiv-analyze <domain> [opts]` | Analyze selected pages against the 36 `AIVB-xxx` checks. With `--thorough`, resolve NEEDS_REVIEW via the `aiv-page-auditor` subagent. |
 | `/aiv-add-competitor <target-domain> <competitor-url>` | Register a competitor for the target domain. |
 | `/aiv-compare <target-domain> [opts]` | Compare target vs competitors using saved artifacts. |
 | `/aiv-report <target-domain> [opts]` | Generate the final Markdown/JSON report. |
+| `/aiv-priority <target-domain> [opts]` | Generate the single-site priority HTML+JSON report. |
 | `/aiv-status [target-domain]` | Show local artifact status. |
 | `/aiv-checklist` | Print the 36 public checks (severity, mode, source ID, fix family). |
 | `/aiv-doctor` | Validate plugin install, Node version, artifact folders, English-only docs. |
@@ -159,11 +160,40 @@ Confidence is `low` when either side has fewer than 10 analyzed pages.
 
 This is documented as a v0.1 heuristic, not a Semrush AI Visibility score.
 
+## 8a. Priority scoring (`/aiv-priority`)
+
+The priority report uses a separate single-axis score, independent of the
+per-page score in section 8:
+
+```
+fail_pct(c)        = 100 * count(verdict == FAIL on c) /
+                     count(verdict in {PASS, FAIL} on c)
+severity_factor(c) = Critical 1.0 | High 0.85 | Medium 0.7 | Low 0.5
+priority(c)        = clamp(0, 100, fail_pct(c) * severity_factor(c))
+```
+
+NEEDS_REVIEW and N/A verdicts are excluded from the denominator. AIVB-029
+(Core Web Vitals) is excluded entirely from the priority report because it
+requires PageSpeed Insights or CrUX data the plugin does not call.
+
+Buckets: HIGH ≥ 50, MEDIUM 20-49, LOW 5-19, NONE < 5.
+
+This is a single-site signal. The priority report does not include
+competitor columns; competitor comparison stays in `/aiv-compare` and
+`/aiv-report`.
+
+To make the verdict matrix faithful enough for the formula, `/aiv-analyze`
+gains a `--thorough` flag that resolves residual `NEEDS_REVIEW` verdicts
+through the existing `aiv-page-auditor` subagent. Without `--thorough` the
+priority report still works but warns the reader that scores for checks in
+`needs-claude-review` mode are likely understated.
+
 ## 9. Output formats
 
 - `JSON` — every artifact is JSON for machine reuse.
 - `Markdown` — primary user-facing format; default for `/aiv-report`.
-- `HTML` — not in v0.1.0 (deferred).
+- `HTML` — used by `/aiv-priority` (single-site priority report). The
+  Markdown `/aiv-report` does not emit HTML.
 
 All Markdown is English-only. A test enforces no Cyrillic characters in
 README, docs, commands, skills, and agents.

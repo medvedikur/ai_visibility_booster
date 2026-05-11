@@ -378,6 +378,22 @@ the source repository's checklist Excel.
 - Minimal fix family: add a prompt-mapped FAQ block; record prompt mappings
   in metadata.
 
+## Detector corrections (post-launch)
+
+After comparing plugin verdicts against an LLM-judged baseline on a real
+site, five detectors were corrected to remove systematic false positives
+and false negatives. The public IDs and source IDs are unchanged; only
+the evaluation strategy moved.
+
+| Public ID | Source ID | Old mode | New behaviour |
+|---|---|---|---|
+| AIVB-012 | S037 | needs-claude-review | Page-type classifier returns N/A on service/industry/legal/corporate landing pages; NEEDS_REVIEW only on expertise-sensitive page types (article/case/event) without a byline. |
+| AIVB-019 | S047 | heuristic (FAIL on missing alt of any "meaningful" image) | Now counts every in-body img >= 96x96 outside nav/header/footer; reports missing-alt percentage. FAILs at >= 10% missing alt. |
+| AIVB-029 | S060 | needs-claude-review | Marked `excludeFromPriority: true`; reported in `/aiv-analyze` but not in `/aiv-priority` because Core Web Vitals require PSI/CrUX. |
+| AIVB-030 | S061 | heuristic (FAIL on any fixed-position cookie banner) | Demoted to needs-claude-review. Heuristic only records the candidate; judge decides whether the overlay actually blocks main content. |
+| AIVB-034 | S066 | deterministic (FAIL on lang=en-us without hreflang) | Detects site-level multilingual signal (any hreflang link anywhere in the crawl, or two distinct language path segments) before failing. Single-language sites return N/A. |
+| AIVB-035 | S067 | deterministic (string compare title/H1/og/schema) | Demoted to needs-claude-review. Heuristic records the divergence; judge decides whether marketing title + short H1 are semantically aligned. |
+
 ## Provenance summary
 
 The mapping above is canonical. Tests in `tests/checklist.test.mjs` enforce:
