@@ -106,6 +106,13 @@ test("AIVB-019 FAILs when meaningful images missing alt", async () => {
   assert.equal(v.value, "FAIL");
 });
 
+test("AIVB-035 returns NEEDS_REVIEW on marketing-title + short-h1 patterns (semantic, not literal)", async () => {
+  const page = await loadPage("marketing-title-page.html", "https://example.com/services/banking-and-financial");
+  const verdicts = analyzePage(page, buildContext());
+  const v = verdicts.find((x) => x.checkId === "AIVB-035");
+  assert.equal(v.value, "NEEDS_REVIEW");
+});
+
 test("AIVB-034 returns N/A on a single-language site (no other-language signal in crawl)", async () => {
   const page = await loadPage("single-language-page.html", "https://example.com/services/qa-outsourcing");
   const verdicts = analyzePage(page, buildContext({ siteMultilingual: false }));
