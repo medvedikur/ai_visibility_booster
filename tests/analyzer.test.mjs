@@ -106,6 +106,28 @@ test("AIVB-019 FAILs when meaningful images missing alt", async () => {
   assert.equal(v.value, "FAIL");
 });
 
+test("AIVB-034 returns N/A on a single-language site (no other-language signal in crawl)", async () => {
+  const page = await loadPage("single-language-page.html", "https://example.com/services/qa-outsourcing");
+  const verdicts = analyzePage(page, buildContext({ siteMultilingual: false }));
+  const v = verdicts.find((x) => x.checkId === "AIVB-034");
+  assert.equal(v.value, "N/A");
+  assert.match(v.evidence, /single-language/i);
+});
+
+test("AIVB-034 FAILs on a multilingual site when page has no hreflang", async () => {
+  const page = await loadPage("single-language-page.html", "https://example.com/services/qa-outsourcing");
+  const verdicts = analyzePage(page, buildContext({ siteMultilingual: true }));
+  const v = verdicts.find((x) => x.checkId === "AIVB-034");
+  assert.equal(v.value, "FAIL");
+});
+
+test("AIVB-034 PASSes when hreflang links exist on the page", async () => {
+  const page = await loadPage("multilingual-page.html", "https://example.com/en/services/qa-outsourcing");
+  const verdicts = analyzePage(page, buildContext({ siteMultilingual: true }));
+  const v = verdicts.find((x) => x.checkId === "AIVB-034");
+  assert.equal(v.value, "PASS");
+});
+
 test("AIVB-030 returns NEEDS_REVIEW when a fixed-position interstitial candidate is detected", async () => {
   const page = await loadPage("failing-page.html", "https://example.com/internal");
   page.interstitialCandidate = true;

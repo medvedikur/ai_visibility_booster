@@ -197,6 +197,20 @@ async function cmdAnalyze(positional, flags) {
     h1: p.snapshot?.headings?.h1?.[0] || ""
   }));
 
+  const siteMultilingual = crawlData.pages.some((p) => (p.snapshot?.hreflang || []).length > 0)
+    || (() => {
+         const langCodes = new Set();
+         for (const p of crawlData.pages) {
+           for (const link of p.snapshot?.links || []) {
+             try {
+               const seg = new URL(link.resolved).pathname.split("/").filter(Boolean)[0] || "";
+               if (/^[a-z]{2}(-[a-z]{2})?$/i.test(seg)) langCodes.add(seg.toLowerCase());
+             } catch {}
+           }
+         }
+         return langCodes.size >= 2;
+       })();
+
   const verdicts = [];
   for (const page of selected) {
     const ctx = {
@@ -204,7 +218,8 @@ async function cmdAnalyze(positional, flags) {
       fetchedOk: page.ok !== false,
       inSitemap: sitemapUrlSet.has(normalizeUrl(page.url)),
       hasInternalInboundLink: (inboundCounts.get(normalizeUrl(page.url)) || 0) > 0,
-      sameOriginPages
+      sameOriginPages,
+      siteMultilingual
     };
     const pageVerdicts = analyzePage(page.snapshot, ctx);
     const score = scorePage(pageVerdicts);
