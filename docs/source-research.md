@@ -32,7 +32,7 @@ findings (`CLAUDE.md` in the source) are:
 > hygiene-like or NEUT/NEG correlation.
 
 The 36 hot-list IDs are the BASIC checks that ever produced a FAIL on the
-fully-analyzed corpus (site.com, testlio.com, itransition.com — 2497 pages
+fully-analyzed corpus (site.com, site2.com, itransition.com — 2497 pages
 as of 2026-05-04, per source). Checks outside that set were always PASS or
 N/A and add cost without insight.
 

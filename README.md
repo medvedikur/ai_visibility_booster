@@ -11,9 +11,8 @@ all locally, with no third-party APIs.
 
 ## What this is
 
-- **Local audit pipeline** for the 36 BASIC AI Visibility checks identified
-  by source research as the practical baseline for crawler-readiness and
-  extractability.
+- **Local audit pipeline** for the 36 BASIC AI Visibility checks that form
+  the practical baseline for crawler-readiness and extractability.
 - **Claude Code commands** for crawl, analyze, compare, report.
 - **Stable public IDs**: every check has an `AIVB-NNN` identifier (`AIVB-001`
   through `AIVB-036`).
@@ -48,17 +47,11 @@ covering:
 - Hreflang and title/H1/og:title alignment
 - Strategic page prompt-coverage
 
-The full table is printed by `/aiv-checklist` and detailed in
-`docs/source-research.md`.
-
-> The plugin does not use a 25-check subset. Anyone documenting "25 checks"
-> is reading stale material.
+The full table is printed by `/aiv-checklist`.
 
 ## Public ID model
 
 - The primary identifier on every check is `AIVB-NNN` (e.g. `AIVB-019`).
-- Each check stores a `sourceId` (e.g. `S047`) for traceability back to the
-  original research repository — provenance metadata only.
 - All CLI output, reports, and JSON artifacts use the public `AIVB-xxx` IDs.
 
 ## Install
@@ -150,11 +143,11 @@ marketplace is not implied or claimed by this README.
 /aiv-checklist
 /aiv-crawl https://site.com --limit 100
 /aiv-analyze site.com --random 20 --seed 42
-/aiv-add-competitor site.com https://testlio.com
-/aiv-crawl https://testlio.com --limit 100
-/aiv-analyze testlio.com --random 20 --seed 42
-/aiv-compare site.com --competitors testlio.com
-/aiv-report site.com --competitors testlio.com
+/aiv-add-competitor site.com https://site2.com
+/aiv-crawl https://site2.com --limit 100
+/aiv-analyze site2.com --random 20 --seed 42
+/aiv-compare site.com --competitors site2.com
+/aiv-report site.com --competitors site2.com
 ```
 
 The report ends up in `./.ai-visibility/reports/<timestamp>-<domain>.md`.
@@ -229,8 +222,7 @@ node bin/aiv.mjs checklist
 node bin/aiv.mjs doctor
 ```
 
-See `docs/spec.md`, `docs/plan.md`, `docs/testing.md`, and
-`docs/source-research.md` for design and provenance.
+See `docs/spec.md`, `docs/plan.md`, and `docs/testing.md` for design notes.
 
 ## License
 

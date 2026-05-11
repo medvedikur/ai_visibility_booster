@@ -103,14 +103,14 @@ All commands run in `/Users/m.urbanovich/Documents/urbagent/ai_visibility_booste
 ### Bug summary
 
 Manual plugin smoke test against the v0.1.0 plugin showed that
-`/ai-visibility-booster:aiv-crawl https://a1qa.com --limit 200 --depth 3`
+`/ai-visibility-booster:aiv-crawl https://site.com --limit 200 --depth 3`
 returned `Total candidates: 1, Pages fetched: 1`.
 
-The site `https://a1qa.com` redirects to `https://www.a1qa.com`. The v0.1.0
-crawler computes `baseHost` from the original seed (`a1qa.com`). `fetch`
+The site `https://site.com` redirects to `https://www.site.com`. The v0.1.0
+crawler computes `baseHost` from the original seed (`site.com`). `fetch`
 follows redirects internally but `fetchText` discards `res.url`, so the
 crawler never learns about the canonical host. Every discovered sitemap or
-in-page link on `www.a1qa.com` is then rejected by
+in-page link on `www.site.com` is then rejected by
 `if (host !== baseHost) continue;`. The seed itself is fetched once (via
 the implicit redirect) but no further URLs are queued, hence
 `Pages fetched: 1`.
@@ -133,16 +133,16 @@ the implicit redirect) but no further URLs are queued, hence
 
 ```
 rm -rf .tmp/repro-a1qa
-node bin/aiv.mjs crawl https://a1qa.com --limit 200 --depth 3 \
+node bin/aiv.mjs crawl https://site.com --limit 200 --depth 3 \
   --out .tmp/repro-a1qa
 ```
 
 v0.1.0 result: `Total candidates: 1`, `Pages fetched: 1`,
-no `www.a1qa.com` URLs in `urls.json`. Live network repro at this branch
+no `www.site.com` URLs in `urls.json`. Live network repro at this branch
 cut: same outcome — `stats.json` shows `totalCandidates: 1`, `fetched: 1`,
 `statusCounts: {"200":1}`, and `urls.json` contains only
-`https://a1qa.com`. Captured under
-`.tmp/repro-a1qa/sites/a1qa.com/crawl-runs/.../`.
+`https://site.com`. Captured under
+`.tmp/repro-a1qa/sites/site.com/crawl-runs/.../`.
 
 ### Superpowers / TDD workflow
 
@@ -205,8 +205,8 @@ cut: same outcome — `stats.json` shows `totalCandidates: 1`, `fetched: 1`,
     `AIVisibilityBooster/0.1.1 (+https://github.com/medvedikur/ai_visibility_booster)`.
   - Crawler returns `domain: normalizeDomain(requestedHost)` so artifacts
     are stored under the apex regardless of which host the redirect lands
-    on (e.g. `https://a1qa.com` and the canonical `www.a1qa.com` both
-    write to `.ai-visibility/sites/a1qa.com/`).
+    on (e.g. `https://site.com` and the canonical `www.site.com` both
+    write to `.ai-visibility/sites/site.com/`).
   - Initial scoped-variable bug in `crawlLocal` (`seedUrl`) caught by
     `tests/cli.test.mjs::end-to-end fixture pipeline`; fixed by hoisting
     the binding.
@@ -232,23 +232,23 @@ All commands run in `/Users/m.urbanovich/Documents/urbagent/ai_visibility_booste
     `.tmp/aiv-fixture/reports/`.
 - Live network smoke for the bug fix:
   ```
-  node bin/aiv.mjs crawl https://a1qa.com --limit 50 --depth 3 \
+  node bin/aiv.mjs crawl https://site.com --limit 50 --depth 3 \
     --out .tmp/aiv-a1qa
   ```
   - `totalCandidates: 792`, `fetched: 50`, `statusCounts: {"200": 50}`.
-  - `stats.seedUrl = "https://a1qa.com"`,
-    `stats.seedFinalUrl = "https://www.a1qa.com/"`,
-    `stats.requestedHost = "a1qa.com"`,
-    `stats.canonicalHost = "www.a1qa.com"`,
-    `stats.hostAliases = ["a1qa.com", "www.a1qa.com"]`,
+  - `stats.seedUrl = "https://site.com"`,
+    `stats.seedFinalUrl = "https://www.site.com/"`,
+    `stats.requestedHost = "site.com"`,
+    `stats.canonicalHost = "www.site.com"`,
+    `stats.hostAliases = ["site.com", "www.site.com"]`,
     `stats.redirectedSeed = true`,
-    `stats.crawlOrigin = "https://www.a1qa.com"`,
+    `stats.crawlOrigin = "https://www.site.com"`,
     `stats.sitemapIndexCount = 1`, `stats.sitemapFetched = 8`.
-  - All 50 fetched URLs are on `www.a1qa.com`. No cross-domain
+  - All 50 fetched URLs are on `www.site.com`. No cross-domain
     expansion. No entries on unrelated hosts.
-  - `node bin/aiv.mjs analyze a1qa.com --random 5 --seed 42 --artifacts
+  - `node bin/aiv.mjs analyze site.com --random 5 --seed 42 --artifacts
     .tmp/aiv-a1qa` → analyzed 5 pages, average score 87, artifacts
-    under `.tmp/aiv-a1qa/sites/a1qa.com/analyses/`. Apex-domain key
+    under `.tmp/aiv-a1qa/sites/site.com/analyses/`. Apex-domain key
     works after a www-canonical crawl.
 - `git ls-files | grep -E '^(_source/|\.tmp/|\.ai-visibility/|node_modules)'`
   returns empty.
@@ -267,8 +267,8 @@ Verified against the user's review checklist:
   redirected or sitemap-listed URL on an unrelated host is dropped.
 - **Apex/www aliases only.** `isWwwAliasHost` checks `stripWww` equality
   and rejects identical-host pairs, so siblings like
-  `a1qa.com`/`www.a1qa.com` are aliased while `sub.a1qa.com` /
-  `a1qa.com` are not.
+  `site.com`/`www.site.com` are aliased while `sub.site.com` /
+  `site.com` are not.
 - **Sitemap recursion capped.** `SITEMAP_FETCH_CAP = 50`; the loop
   exits when the cap is reached. Sitemap-index `loc` entries are pushed
   onto the same fetch stack and de-duplicated via `sitemapFetched`.
