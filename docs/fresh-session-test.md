@@ -1,7 +1,7 @@
 # Fresh-Session Manual Test
 
 The Claude Code CLI does not provide a non-interactive way for a non-Claude
-process to install and exercise plugin commands at v0.1.0 cut time. The
+process to install and exercise plugin commands at v0.1.1 cut time. The
 "fresh session" verification therefore has manual steps. Follow them on a
 machine that does not already have the plugin loaded.
 
@@ -53,7 +53,7 @@ machine that does not already have the plugin loaded.
 - The build agent could not execute steps 3 and 4 (loading the plugin into
   a live Claude Code session and pressing slash commands) non-interactively.
   Step 5 (the fixture pipeline) is exercised by `tests/cli.test.mjs` and
-  ran green at v0.1.0 cut.
+  ran green at v0.1.1 cut.
 - Until the marketplace install is accepted, plugin loading uses the local
   development path; update the README "Marketplace install" section after
   acceptance.

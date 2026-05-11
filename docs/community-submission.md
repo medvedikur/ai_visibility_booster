@@ -17,7 +17,7 @@ https://clau.de/plugin-directory-submission
 | Category (recommended) | development |
 | Alternative category | productivity |
 | Source | https://github.com/medvedikur/ai_visibility_booster |
-| Version / ref | v0.1.0 |
+| Version / ref | v0.1.1 |
 | Homepage | https://github.com/medvedikur/ai_visibility_booster |
 | Author | medvedikur |
 | Tags | ai-visibility, technical-seo, ai-search, crawler-readiness, website-audit, claude-code |
@@ -28,11 +28,11 @@ https://clau.de/plugin-directory-submission
 - No authentication or CAPTCHA bypass.
 - No secrets are read or written.
 - Local artifacts only (`./.ai-visibility/`); no third-party API calls in
-  v0.1.0.
+  v0.1.x.
 - All public-facing output uses the new public IDs `AIVB-001` through
   `AIVB-036`. Source IDs (`Sxxx`) are stored as provenance metadata only.
 
-## Submission status (as of v0.1.0 cut)
+## Submission status (as of v0.1.1 cut)
 
 - The repository, manifest, commands, skills, agents, and CLI are ready
   for submission.
@@ -52,4 +52,4 @@ https://clau.de/plugin-directory-submission
 - [ ] `.claude-plugin/plugin.json` parseable; `name` is
   `ai-visibility-booster`.
 - [ ] GitHub repo description and topics set.
-- [ ] `v0.1.0` git tag and GitHub release created.
+- [ ] `v0.1.1` git tag and GitHub release created.

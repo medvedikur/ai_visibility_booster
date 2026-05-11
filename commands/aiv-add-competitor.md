@@ -5,7 +5,8 @@ allowed-tools: Bash, Read
 ---
 
 Append `$2` to `./.ai-visibility/sites/$1/competitors.json` and remind the
-user to crawl + analyze the competitor before running `/aiv-compare`.
+user to crawl + analyze the competitor before running
+`/ai-visibility-booster:aiv-compare`.
 
 ## What to do
 
@@ -18,11 +19,12 @@ node ${CLAUDE_PLUGIN_ROOT}/bin/aiv.mjs add-competitor $ARGUMENTS
 2. Read the printed competitor list back to the user.
 
 3. If the CLI notes that no crawl artifacts exist for the new competitor,
-   suggest:
+   suggest the namespaced commands (reliable after marketplace
+   installation; un-namespaced aliases may exist but are not guaranteed):
 
 ```
-/aiv-crawl https://<competitor> --limit 100
-/aiv-analyze <competitor> --random 20 --seed 42
+/ai-visibility-booster:aiv-crawl https://<competitor> --limit 100
+/ai-visibility-booster:aiv-analyze <competitor> --random 20 --seed 42
 ```
 
 4. Do not start the competitor crawl yourself unless explicitly asked.

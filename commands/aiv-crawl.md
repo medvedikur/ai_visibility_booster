@@ -30,8 +30,13 @@ node ${CLAUDE_PLUGIN_ROOT}/bin/aiv.mjs crawl $ARGUMENTS
 3. Suggest the next command:
 
 ```
-/aiv-analyze <domain> --random 25 --seed 42
+/ai-visibility-booster:aiv-analyze <domain> --random 25 --seed 42
 ```
+
+Note: some Claude Code installations may expose un-namespaced aliases
+(e.g. `/aiv-analyze`), but the namespaced form
+`/ai-visibility-booster:aiv-analyze` is the reliable form after
+marketplace installation. Always use it when guiding the user.
 
 Do not claim success unless the CLI exits 0 and the artifacts directory
 exists. If the CLI fails, surface the error verbatim.

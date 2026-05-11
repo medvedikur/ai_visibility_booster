@@ -27,8 +27,8 @@ all locally, with no third-party APIs.
 - **No guarantees** of AI citations, AI Overview placements, or Semrush AI
   Visibility score increases.
 - **No CAPTCHA / WAF / authentication bypass.**
-- **No Semrush API dependency** in v0.1.0.
-- **No Web UI** in v0.1.0 — Claude Code chat is the only interface.
+- **No Semrush API dependency** in v0.1.x.
+- **No Web UI** in v0.1.x — Claude Code chat is the only interface.
 
 ## Scope: 36 checks (`AIVB-001` through `AIVB-036`)
 
@@ -68,48 +68,56 @@ dependencies**.
 
 ### Install from GitHub (recommended)
 
-The repository ships its own `.claude-plugin/marketplace.json`, so Claude
-Code can install it directly from GitHub — no clone, no npm, no global
-install step.
+The repository ships its own `.claude-plugin/marketplace.json` (the
+marketplace is named `ai-visibility-booster-marketplace`, distinct from
+the plugin name `ai-visibility-booster`), so Claude Code can install
+this plugin directly from GitHub — no clone, no npm, no global install
+step.
 
 In a Claude Code session, run:
 
 ```
 /plugin marketplace add medvedikur/ai_visibility_booster
-/plugin install ai-visibility-booster@ai-visibility-booster
+/plugin install ai-visibility-booster@ai-visibility-booster-marketplace
+/reload-plugins
 ```
 
-The first command registers this repo as a local marketplace. The second
-installs the plugin from it (the `@ai-visibility-booster` suffix is the
-marketplace name, which happens to match the plugin name).
+The first command registers this repo as a self-hosted marketplace by
+reading `.claude-plugin/marketplace.json` from the repo's default
+branch. The second installs the plugin from that marketplace (the
+`@ai-visibility-booster-marketplace` suffix is the marketplace name).
+`/reload-plugins` ensures the `/aiv-*` commands and the namespaced
+`/ai-visibility-booster:aiv-*` commands appear immediately.
 
 Verify it loaded:
 
 ```
 /plugin
-/aiv-doctor
+/ai-visibility-booster:aiv-doctor
 ```
 
-If the `/aiv-*` commands do not appear immediately, run `/reload-plugins`
-or restart the Claude Code session.
+If the commands do not appear immediately, restart the Claude Code
+session.
 
-To update later:
+To update later (after a new tag is published):
 
 ```
-/plugin marketplace update ai-visibility-booster
-/plugin install ai-visibility-booster@ai-visibility-booster
+/plugin marketplace update ai-visibility-booster-marketplace
+/plugin install ai-visibility-booster@ai-visibility-booster-marketplace
 ```
 
 To remove:
 
 ```
 /plugin uninstall ai-visibility-booster
-/plugin marketplace remove ai-visibility-booster
+/plugin marketplace remove ai-visibility-booster-marketplace
 ```
 
 ### Install from a local clone
 
-Useful if you want to hack on the plugin itself.
+Useful if you want to hack on the plugin itself. `/plugin marketplace
+add` expects a `.claude-plugin/marketplace.json` file at the root of the
+target, which this repo provides.
 
 1. Clone the repository:
    ```
@@ -124,14 +132,16 @@ Useful if you want to hack on the plugin itself.
 3. Add the local checkout as a marketplace and install:
    ```
    /plugin marketplace add /absolute/path/to/ai_visibility_booster
-   /plugin install ai-visibility-booster@ai-visibility-booster
+   /plugin install ai-visibility-booster@ai-visibility-booster-marketplace
+   /reload-plugins
    ```
 
 ### Marketplace install (after acceptance)
 
-Once the plugin is accepted into the official Claude Code plugin directory,
-it can also be installed via Claude Code's plugin browser. The plugin name
-is `ai-visibility-booster`.
+If the plugin is accepted into the official Claude Code plugin directory,
+it can also be installed via Claude Code's plugin browser. The plugin
+name is `ai-visibility-booster`. Acceptance into any third-party
+marketplace is not implied or claimed by this README.
 
 ## Quick start
 
@@ -186,7 +196,7 @@ The report ends up in `./.ai-visibility/reports/<timestamp>-<domain>.md`.
 
 ## Limitations
 
-- v0.1.0 evaluators are **deterministic / heuristic / needs-claude-review**.
+- v0.1.x evaluators are **deterministic / heuristic / needs-claude-review**.
   Many checks (e.g. mobile-rendered visibility, performance, prompt
   coverage) cannot be proven from static HTML alone and intentionally return
   `NEEDS_REVIEW`. The included Claude skills and `aiv-page-auditor` agent
@@ -196,7 +206,7 @@ The report ends up in `./.ai-visibility/reports/<timestamp>-<domain>.md`.
   CAPTCHA, or WAF defenses.
 - The score is a v0.1 heuristic — not a Semrush AI Visibility score, not a
   Lighthouse score, and not a guarantee of any ranking outcome.
-- No browser rendering / JS execution in v0.1.0; JS-only single-page apps
+- No browser rendering / JS execution in v0.1.x; JS-only single-page apps
   will appear under-extracted (which is itself a finding via `AIVB-032`).
 - The runtime has no external npm dependencies. Everything runs on Node 20+
   built-ins (`fetch`, `node:test`, `node:fs/promises`).

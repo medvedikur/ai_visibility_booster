@@ -15,5 +15,7 @@ node ${CLAUDE_PLUGIN_ROOT}/bin/aiv.mjs status $ARGUMENTS
 ```
 
 2. Present the output verbatim. If a site has no `lastCrawlRun`, suggest
-   `/aiv-crawl https://<domain>`. If it has no `lastAnalysis`, suggest
-   `/aiv-analyze <domain>`.
+   `/ai-visibility-booster:aiv-crawl https://<domain>`. If it has no
+   `lastAnalysis`, suggest `/ai-visibility-booster:aiv-analyze <domain>`.
+   The namespaced form is the reliable command form after marketplace
+   installation.

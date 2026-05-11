@@ -51,6 +51,6 @@ node bin/aiv.mjs report fixture.local --artifacts .tmp/aiv-fixture --format md
 
 - Network-bound crawl of real third-party sites is not part of the test suite.
   It requires manual smoke testing per `docs/fresh-session-test.md`.
-- Lighthouse / Core Web Vitals collection is not part of v0.1.0.
-- Browser rendering / JS execution is not part of v0.1.0; checks that need
+- Lighthouse / Core Web Vitals collection is not part of v0.1.x.
+- Browser rendering / JS execution is not part of v0.1.x; checks that need
   it return `NEEDS_REVIEW`.

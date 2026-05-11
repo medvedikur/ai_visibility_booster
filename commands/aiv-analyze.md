@@ -31,12 +31,15 @@ node ${CLAUDE_PLUGIN_ROOT}/bin/aiv.mjs analyze $ARGUMENTS
    any updated verdicts back into `verdicts.json` under `claudeReview`
    keys; do not overwrite the deterministic/heuristic verdict fields.
 
-5. Recommend the next step:
-   - `/aiv-add-competitor <domain> https://<competitor>` if no competitors
-     are registered yet;
-   - `/aiv-compare <domain> --competitors <csv>` if competitors are
-     registered and analyzed;
-   - `/aiv-report <domain>` for the final Markdown report.
+5. Recommend the next step using the namespaced command form (some
+   Claude Code installations expose un-namespaced aliases, but the
+   namespaced form is reliable after marketplace installation):
+   - `/ai-visibility-booster:aiv-add-competitor <domain> https://<competitor>`
+     if no competitors are registered yet;
+   - `/ai-visibility-booster:aiv-compare <domain> --competitors <csv>`
+     if competitors are registered and analyzed;
+   - `/ai-visibility-booster:aiv-report <domain>` for the final
+     Markdown report.
 
 Rules:
 - never recommend rewriting page content;
