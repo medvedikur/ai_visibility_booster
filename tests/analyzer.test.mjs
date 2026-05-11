@@ -106,6 +106,23 @@ test("AIVB-019 FAILs when meaningful images missing alt", async () => {
   assert.equal(v.value, "FAIL");
 });
 
+test("AIVB-030 returns NEEDS_REVIEW when a fixed-position interstitial candidate is detected", async () => {
+  const page = await loadPage("failing-page.html", "https://example.com/internal");
+  page.interstitialCandidate = true;
+  const verdicts = analyzePage(page, buildContext());
+  const v = verdicts.find((x) => x.checkId === "AIVB-030");
+  assert.equal(v.value, "NEEDS_REVIEW");
+  assert.match(v.evidence, /candidate|judge/i);
+});
+
+test("AIVB-030 PASSes when no candidate detected", async () => {
+  const page = await loadPage("passing-page.html", "https://example.com/services/qa-outsourcing");
+  page.interstitialCandidate = false;
+  const verdicts = analyzePage(page, buildContext());
+  const v = verdicts.find((x) => x.checkId === "AIVB-030");
+  assert.equal(v.value, "PASS");
+});
+
 test("AIVB-019 counts in-body images outside nav/header/footer", async () => {
   const page = await loadPage("image-heavy-page.html", "https://example.com/awards");
   const verdicts = analyzePage(page, buildContext());
