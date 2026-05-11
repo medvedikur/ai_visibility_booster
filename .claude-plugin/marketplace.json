@@ -1,0 +1,15 @@
+{
+  "name": "ai-visibility-booster",
+  "owner": {
+    "name": "medvedikur",
+    "url": "https://github.com/medvedikur"
+  },
+  "plugins": [
+    {
+      "name": "ai-visibility-booster",
+      "source": "./",
+      "description": "Technical AI Visibility audits: crawl URLs, run 36 crawler-readiness checks, compare competitors, generate local reports.",
+      "version": "0.1.0"
+    }
+  ]
+}

@@ -31,11 +31,11 @@ machine that does not already have the plugin loaded.
    - Run `/aiv-checklist`. Expected: a 36-row table with public IDs
      `AIVB-001` through `AIVB-036`. Source IDs (`Sxxx`) appear only in the
      `Source` column.
-   - Run `/aiv-crawl https://a1qa.com --limit 10`. Expected: status
-     summary and an artifact path under `./.ai-visibility/sites/a1qa.com/`.
-   - Run `/aiv-analyze a1qa.com --random 3 --seed 1`. Expected: per-page
-     scores and an analysis path under `./.ai-visibility/sites/a1qa.com/analyses/`.
-   - Run `/aiv-report a1qa.com`. Expected: a report path under
+   - Run `/aiv-crawl https://site.com --limit 10`. Expected: status
+     summary and an artifact path under `./.ai-visibility/sites/site.com/`.
+   - Run `/aiv-analyze site.com --random 3 --seed 1`. Expected: per-page
+     scores and an analysis path under `./.ai-visibility/sites/site.com/analyses/`.
+   - Run `/aiv-report site.com`. Expected: a report path under
      `./.ai-visibility/reports/`. The report must:
      - Use `AIVB-xxx` IDs as primary identifiers in tables and bullets.
      - Have a "Caveats" section that explicitly disclaims AI citation /

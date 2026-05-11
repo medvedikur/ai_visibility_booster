@@ -66,40 +66,85 @@ The full table is printed by `/aiv-checklist` and detailed in
 This plugin requires Node.js 20 or newer. It has **no runtime npm
 dependencies**.
 
-### Local development install (recommended for now)
+### Install from GitHub (recommended)
+
+The repository ships its own `.claude-plugin/marketplace.json`, so Claude
+Code can install it directly from GitHub — no clone, no npm, no global
+install step.
+
+In a Claude Code session, run:
+
+```
+/plugin marketplace add medvedikur/ai_visibility_booster
+/plugin install ai-visibility-booster@ai-visibility-booster
+```
+
+The first command registers this repo as a local marketplace. The second
+installs the plugin from it (the `@ai-visibility-booster` suffix is the
+marketplace name, which happens to match the plugin name).
+
+Verify it loaded:
+
+```
+/plugin
+/aiv-doctor
+```
+
+If the `/aiv-*` commands do not appear immediately, run `/reload-plugins`
+or restart the Claude Code session.
+
+To update later:
+
+```
+/plugin marketplace update ai-visibility-booster
+/plugin install ai-visibility-booster@ai-visibility-booster
+```
+
+To remove:
+
+```
+/plugin uninstall ai-visibility-booster
+/plugin marketplace remove ai-visibility-booster
+```
+
+### Install from a local clone
+
+Useful if you want to hack on the plugin itself.
 
 1. Clone the repository:
    ```
    git clone https://github.com/medvedikur/ai_visibility_booster.git
    cd ai_visibility_booster
    ```
-2. Confirm install:
+2. Confirm the CLI works standalone:
    ```
    node bin/aiv.mjs checklist
    node bin/aiv.mjs doctor
    ```
-3. Load it as a local plugin in Claude Code by following the official
-   plugin loading instructions for your Claude Code version. Once Claude
-   Code can see the plugin, the `/aiv-*` commands will appear.
+3. Add the local checkout as a marketplace and install:
+   ```
+   /plugin marketplace add /absolute/path/to/ai_visibility_booster
+   /plugin install ai-visibility-booster@ai-visibility-booster
+   ```
 
 ### Marketplace install (after acceptance)
 
 Once the plugin is accepted into the official Claude Code plugin directory,
-install it from the marketplace via Claude Code's plugin browser. The plugin
-name is `ai-visibility-booster`.
+it can also be installed via Claude Code's plugin browser. The plugin name
+is `ai-visibility-booster`.
 
 ## Quick start
 
 ```
 /aiv-doctor
 /aiv-checklist
-/aiv-crawl https://a1qa.com --limit 100
-/aiv-analyze a1qa.com --random 20 --seed 42
-/aiv-add-competitor a1qa.com https://testlio.com
+/aiv-crawl https://site.com --limit 100
+/aiv-analyze site.com --random 20 --seed 42
+/aiv-add-competitor site.com https://testlio.com
 /aiv-crawl https://testlio.com --limit 100
 /aiv-analyze testlio.com --random 20 --seed 42
-/aiv-compare a1qa.com --competitors testlio.com
-/aiv-report a1qa.com --competitors testlio.com
+/aiv-compare site.com --competitors testlio.com
+/aiv-report site.com --competitors testlio.com
 ```
 
 The report ends up in `./.ai-visibility/reports/<timestamp>-<domain>.md`.
