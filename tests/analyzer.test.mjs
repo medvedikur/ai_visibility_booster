@@ -106,6 +106,21 @@ test("AIVB-019 FAILs when meaningful images missing alt", async () => {
   assert.equal(v.value, "FAIL");
 });
 
+test("AIVB-019 counts in-body images outside nav/header/footer", async () => {
+  const page = await loadPage("image-heavy-page.html", "https://example.com/awards");
+  const verdicts = analyzePage(page, buildContext());
+  const v = verdicts.find((x) => x.checkId === "AIVB-019");
+  assert.equal(v.value, "FAIL");
+  assert.match(v.evidence, /meaningful[^=]*=9/i, `evidence should report 9 meaningful images, got: ${v.evidence}`);
+});
+
+test("AIVB-019 evidence reports missing-alt percentage", async () => {
+  const page = await loadPage("image-heavy-page.html", "https://example.com/awards");
+  const verdicts = analyzePage(page, buildContext());
+  const v = verdicts.find((x) => x.checkId === "AIVB-019");
+  assert.match(v.evidence, /100%|9\/9/, `evidence should report 9/9 or 100%, got: ${v.evidence}`);
+});
+
 test("AIVB-012 returns N/A on service landing pages", async () => {
   const page = await loadPage("service-landing.html", "https://example.com/services/qa-outsourcing");
   const verdicts = analyzePage(page, buildContext());
