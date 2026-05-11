@@ -1,0 +1,22 @@
+{
+  "name": "ai-visibility-booster",
+  "version": "0.1.0",
+  "description": "Technical AI Visibility audits for websites: crawl URL inventories, run 36 basic crawler-readiness checks, compare competitors, and generate local reports.",
+  "author": {
+    "name": "medvedikur",
+    "url": "https://github.com/medvedikur"
+  },
+  "homepage": "https://github.com/medvedikur/ai_visibility_booster",
+  "repository": "https://github.com/medvedikur/ai_visibility_booster",
+  "license": "MIT",
+  "keywords": [
+    "ai-visibility",
+    "technical-seo",
+    "crawler-readiness",
+    "ai-search",
+    "website-audit",
+    "claude-code",
+    "seo",
+    "web-crawling"
+  ]
+}

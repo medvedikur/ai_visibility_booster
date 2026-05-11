@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+.ai-visibility/
+.tmp/
+_source/
+*.log
+.DS_Store
+.claude/
