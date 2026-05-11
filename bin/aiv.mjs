@@ -255,6 +255,22 @@ async function cmdAnalyze(positional, flags) {
     summary,
     matrix
   });
+
+  const thorough = flags.thorough === true || flags.thorough === "true";
+  if (thorough) {
+    const queue = [];
+    for (const page of verdicts) {
+      for (const v of page.verdicts) {
+        if (v.value === "NEEDS_REVIEW") {
+          queue.push({ url: page.url, hash: page.hash, checkId: v.checkId, sourceId: v.sourceId, heuristicEvidence: v.evidence });
+        }
+      }
+    }
+    const queuePath = path.join(root, "sites", domain, "analyses", id, "needs-review-queue.json");
+    await fs.writeFile(queuePath, `${JSON.stringify(queue, null, 2)}\n`);
+    process.stdout.write(`- --thorough: ${queue.length} verdict(s) queued for aiv-page-auditor in ${queuePath}\n`);
+  }
+
   process.stdout.write(`Analysis complete for ${domain}\n`);
   process.stdout.write(`- Analysis ID: ${id}\n`);
   process.stdout.write(`- Pages analyzed: ${verdicts.length}\n`);
