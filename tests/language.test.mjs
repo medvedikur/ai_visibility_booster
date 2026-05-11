@@ -17,12 +17,18 @@ const ROOTS = [
   "agents"
 ];
 
+// Internal planning artifacts (specs, plans) under docs/superpowers/ may
+// reference Cyrillic source material verbatim; they are not part of the
+// user-facing surface that the English-only rule applies to.
+const INTERNAL_DIRS = new Set(["superpowers"]);
+
 async function walk(dir) {
   const out = [];
   const entries = await fs.readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
+      if (INTERNAL_DIRS.has(entry.name)) continue;
       out.push(...(await walk(full)));
     } else if (entry.isFile() && entry.name.endsWith(".md")) {
       out.push(full);

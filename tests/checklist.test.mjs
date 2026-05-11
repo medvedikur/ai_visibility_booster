@@ -110,3 +110,22 @@ test("indexes by id and sourceId are populated", () => {
     assert.equal(CHECKS_BY_SOURCE_ID.get(src)?.id, pub);
   }
 });
+
+test("every check has non-empty priorityProblem", () => {
+  for (const check of CHECKS) {
+    assert.ok(
+      typeof check.priorityProblem === "string" && check.priorityProblem.length > 0,
+      `${check.id} missing priorityProblem`
+    );
+  }
+});
+
+test("AIVB-029 is excluded from priority computation", () => {
+  const c = CHECKS_BY_ID.get("AIVB-029");
+  assert.equal(c.excludeFromPriority, true);
+});
+
+test("no other check is excluded from priority computation", () => {
+  const excluded = CHECKS.filter((c) => c.excludeFromPriority === true).map((c) => c.id);
+  assert.deepEqual(excluded, ["AIVB-029"]);
+});
