@@ -106,6 +106,21 @@ test("AIVB-019 FAILs when meaningful images missing alt", async () => {
   assert.equal(v.value, "FAIL");
 });
 
+test("AIVB-012 returns N/A on service landing pages", async () => {
+  const page = await loadPage("service-landing.html", "https://example.com/services/qa-outsourcing");
+  const verdicts = analyzePage(page, buildContext());
+  const v = verdicts.find((x) => x.checkId === "AIVB-012");
+  assert.equal(v.value, "N/A");
+  assert.match(v.evidence, /service|page type|byline/i);
+});
+
+test("AIVB-012 returns NEEDS_REVIEW on blog pages with no byline", async () => {
+  const page = await loadPage("blog-no-author.html", "https://example.com/blog/ai-test-automation-2026");
+  const verdicts = analyzePage(page, buildContext());
+  const v = verdicts.find((x) => x.checkId === "AIVB-012");
+  assert.equal(v.value, "NEEDS_REVIEW");
+});
+
 test("verdicts include sourceId for traceability", async () => {
   const page = await loadPage("passing-page.html", "https://example.com/services/qa-outsourcing");
   const verdicts = analyzePage(page, buildContext());
