@@ -1443,7 +1443,7 @@ function row(over = {}) {
   };
 }
 
-const CYRILLIC = /[Ѐ-ӿԀ-ԯ]/;
+const CYRILLIC = /[Ѐ-ԯ]/;
 
 test("HTML contains the domain in title and h1", () => {
   const html = buildPriorityReportHtml({
