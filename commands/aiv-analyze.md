@@ -1,7 +1,7 @@
 ---
-description: Analyze selected pages of a crawled site against the 36 AIVB checks.
-argument-hint: "<domain> [--random N --seed N] [--all] [--urls csv] [--run-id ID]"
-allowed-tools: Bash, Read, Write
+description: Analyze selected pages against the 36 AIVB checks; --thorough resolves NEEDS_REVIEW via aiv-page-auditor.
+argument-hint: "<domain> [--random N --seed N] [--all] [--urls csv] [--run-id ID] [--thorough]"
+allowed-tools: Bash, Read, Write, Task
 ---
 
 Run the 36 `AIVB-001`..`AIVB-036` evaluators on the selected pages and save
@@ -25,23 +25,30 @@ node ${CLAUDE_PLUGIN_ROOT}/bin/aiv.mjs analyze $ARGUMENTS
    - top failed checks (with `AIVB-xxx`, severity, fail count);
    - top NEEDS_REVIEW items.
 
-4. If there are NEEDS_REVIEW items where the page snapshot has enough
-   evidence, invoke the `ai-visibility-basic-checks` skill and the
-   `aiv-page-auditor` agent to confirm or downgrade those verdicts. Save
-   any updated verdicts back into `verdicts.json` under `claudeReview`
-   keys; do not overwrite the deterministic/heuristic verdict fields.
+4. **If `--thorough` was passed**:
+   a. Read `needs-review-queue.json` from the analysis directory.
+   b. For each `{url, hash, checkId, heuristicEvidence}` entry:
+      - Read the corresponding page snapshot from
+        `crawl-runs/<runId>/pages/<hash>.json`.
+      - Invoke the `aiv-page-auditor` subagent with the snapshot, the
+        check definition, and the heuristic evidence.
+      - Apply the returned `{value, evidence, confidence}` patch to the
+        in-memory verdicts.
+   c. Write the patched verdicts back to `verdicts.json` (preserve the
+      original heuristic verdict under `heuristicValue` / `heuristicEvidence`
+      on each judged entry; set `value` and `evidence` to the judge's
+      values; set `judgedBy: "aiv-page-auditor"`).
+   d. Recompute `summary.json` and `check-matrix.json` from the patched
+      verdicts and overwrite them.
 
-5. Recommend the next step using the namespaced command form (some
-   Claude Code installations expose un-namespaced aliases, but the
-   namespaced form is reliable after marketplace installation):
-   - `/ai-visibility-booster:aiv-add-competitor <domain> https://<competitor>`
-     if no competitors are registered yet;
-   - `/ai-visibility-booster:aiv-compare <domain> --competitors <csv>`
-     if competitors are registered and analyzed;
-   - `/ai-visibility-booster:aiv-report <domain>` for the final
-     Markdown report.
+5. Recommend the next step using the namespaced command form:
+   - `/ai-visibility-booster:aiv-priority <domain>` to generate the
+     single-site priority HTML report.
+   - `/ai-visibility-booster:aiv-report <domain>` for the Markdown report.
 
 Rules:
-- never recommend rewriting page content;
-- never present `Sxxx` as a primary public ID;
-- never claim PASS for a check without quoting evidence from the artifact.
+- Never recommend rewriting page content.
+- Never present `Sxxx` as a primary public ID.
+- Never claim PASS for a check without quoting evidence from the artifact.
+- When `--thorough` is used, the judge is the page auditor subagent;
+  do not call any external LLM or service.
